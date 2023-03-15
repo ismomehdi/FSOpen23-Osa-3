@@ -1,1 +1,1 @@
-Course submission repo for https://fullstackopen.com/en/
+Course submission repo for https://fullstackopen.com/en/.
