@@ -1,0 +1,27 @@
+{
+  "name": "osa-3",
+  "version": "1.0.0",
+  "description": "Course submission repo for https://fullstackopen.com/en/.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ismomehdi/FSOpen23-Osa-3.git"
+  },
+  "author": "Ismo Muusavi",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ismomehdi/FSOpen23-Osa-3/issues"
+  },
+  "homepage": "https://github.com/ismomehdi/FSOpen23-Osa-3#readme",
+  "devDependencies": {
+    "nodemon": "^2.0.21"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
