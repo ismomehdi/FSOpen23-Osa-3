@@ -26,7 +26,15 @@ let persons = [
 ]
 
 app.use(express.json())
-app.use(morgan('tiny'))
+
+morgan.token('post-data', (req) => {
+    if (req.method === 'POST') {
+        return JSON.stringify(req.body)
+    }
+})
+
+// app.use(morgan('tiny'))
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :post-data'))
 
 app.get('/', (req, res) => {
     res.send('Hello World!')
@@ -68,8 +76,9 @@ app.post('/api/persons', (req, res) => {
     } else if (persons.find(p => p.name === person.name)) {
         return res.status(400).json({
             error: 'name must be unique'
-        })
-    }
+        }
+
+)}
 
     persons = persons.concat(person)
     res.json(person)
