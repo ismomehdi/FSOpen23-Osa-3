@@ -37,7 +37,6 @@ morgan.token('post-data', (req) => {
     }
 })
 
-// app.use(morgan('tiny'))
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :post-data'))
 
 app.get('/', (req, res) => {
