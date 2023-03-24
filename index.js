@@ -34,13 +34,15 @@ app.get('/api/persons', (req, res, next) => {
 })
 
 app.get('/info', (req, res) => {
-    res.send('Phonebook has info for people <br> <br> ' + new Date().toString())
+    Person.count({})
+        .then(count => {
+            res.send('Phonebook has info for ' + count + ' people <br> <br> ' + new Date().toString())
+        })
+        .catch(error => next(error))
 })
 
 app.get('/api/persons/:id', (req, res, next) => {
-    const id = Number(req.params.id)
-
-    Person.findById(id)
+    Person.findById(req.params.id)
         .then(person => {
             if (person) {
                 res.json(person)
