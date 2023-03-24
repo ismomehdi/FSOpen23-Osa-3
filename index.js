@@ -19,20 +19,22 @@ morgan.token('post-data', (req) => {
 
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :post-data'))
 
-app.get('/', (req, res) => {
-    res.send('Hello World!')
+app.get('/', (req, res, error) => {
+    res
+        .send('Hello World!')
+        .catch(error => next(error))
 })
 
-app.get('/api/persons', (req, res) => {
-    Person.find({}).then(persons => {
-        res.json(persons)
-    })
+app.get('/api/persons', (req, res, next) => {
+    Person.find({})
+        .then(persons => {
+            res.json(persons)
+        })
+        .catch(error => next(error))
 })
 
 app.get('/info', (req, res) => {
-    res.send(
-        'Phonebook has info for ' + persons.length + ' people <br> <br> ' + new Date().toString()
-        )
+    res.send('Phonebook has info for people <br> <br> ' + new Date().toString())
 })
 
 app.get('/api/persons/:id', (req, res, next) => {
@@ -62,9 +64,11 @@ app.post('/api/persons', (req, res) => {
         number: body.number,
     })
 
-    person.save().then(savedPerson => {
-        res.json(savedPerson)
-    })
+    person.save()
+        .then(savedPerson => {
+            res.json(savedPerson)
+        })
+        .catch(error => next(error))
 })
 
 app.delete('/api/persons/:id', (req, res, next) => {
