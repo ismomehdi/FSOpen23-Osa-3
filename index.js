@@ -4,11 +4,12 @@ const app = express()
 const Person = require('./models/person')
 const cors = require('cors')
 var morgan = require('morgan')
+const { response } = require('express')
 
 app.use(express.static('build'))
+app.use(express.json())
 app.use(cors())
 
-app.use(express.json())
 
 morgan.token('post-data', (req) => {
     if (req.method === 'POST') {
@@ -34,16 +35,18 @@ app.get('/info', (req, res) => {
         )
 })
 
-app.get('/api/persons/:id', (req, res) => {
+app.get('/api/persons/:id', (req, res, next) => {
     const id = Number(req.params.id)
 
-    Person.findById(id).then(person => {
-        if (person) {
-            res.json(person)
-        } else {
-            res.status(404).end()
-        }
-    })
+    Person.findById(id)
+        .then(person => {
+            if (person) {
+                res.json(person)
+            } else {
+                res.status(404).end()
+            }
+        })
+        .catch(error => next(error))
 })
 
 app.post('/api/persons', (req, res) => {
@@ -64,14 +67,28 @@ app.post('/api/persons', (req, res) => {
     })
 })
 
-app.delete('/api/persons/:id', (req, res) => {
-    const id = Number(req.params.id)
-    persons = persons.filter(person => person.id !== id)
-
-    res.status(204).end()
+app.delete('/api/persons/:id', (req, res, next) => {
+    Person.findByIdAndRemove(req.params.id)
+        .then(result => {
+            res.status(204).end()
+        })
+        .catch(error => next(error))
 })
 
 const PORT = process.env.PORT
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
 })
+
+const errorHandler = (error, request, response, next) => {
+    console.error(error.message)
+  
+    if (error.name === 'CastError') {
+      return response.status(400).send({ error: 'malformatted id' })
+    }
+  
+    next(error)
+  }
+  
+app.use(errorHandler)
+  
