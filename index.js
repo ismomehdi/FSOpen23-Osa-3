@@ -69,6 +69,11 @@ app.post('/api/persons', (req, res, next) => {
         return res.status(400).json({error: 'content missing'})
     }
 
+    if (body.name < 3) {
+        return res.status(400).json({error: 'name must be at least 3 characters long'})
+    }
+
+    console.log('body', body)
 
     const person = new Person({
         name: body.name,
