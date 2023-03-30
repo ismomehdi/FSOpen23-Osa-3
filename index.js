@@ -4,7 +4,6 @@ const app = express()
 const Person = require('./models/person')
 const cors = require('cors')
 var morgan = require('morgan')
-const { response } = require('express')
 
 app.use(express.static('build'))
 app.use(express.json())
@@ -19,7 +18,7 @@ morgan.token('post-data', (req) => {
 
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :post-data'))
 
-app.get('/', (req, res, error) => {
+app.get('/', (req, res, next) => {
     res
         .send('Hello World!')
         .catch(error => next(error))
@@ -33,7 +32,7 @@ app.get('/api/persons', (req, res, next) => {
         .catch(error => next(error))
 })
 
-app.get('/info', (req, res) => {
+app.get('/info', (req, res, next) => {
     Person.count({})
         .then(count => {
             res.send('Phonebook has info for ' + count + ' people <br> <br> ' + new Date().toString())
@@ -66,11 +65,11 @@ app.post('/api/persons', (req, res, next) => {
     const body = req.body
 
     if (body === undefined) {
-        return res.status(400).json({error: 'content missing'})
+        return res.status(400).json({ error: 'content missing' })
     }
 
     if (body.name < 3) {
-        return res.status(400).json({error: 'name must be at least 3 characters long'})
+        return res.status(400).json({ error: 'name must be at least 3 characters long' })
     }
 
     console.log('body', body)
@@ -89,7 +88,7 @@ app.post('/api/persons', (req, res, next) => {
 
 app.delete('/api/persons/:id', (req, res, next) => {
     Person.findByIdAndRemove(req.params.id)
-        .then(result => {
+        .then(() => {
             res.status(204).end()
         })
         .catch(error => next(error))
@@ -102,16 +101,15 @@ app.listen(PORT, () => {
 
 const errorHandler = (error, request, response, next) => {
     console.error(error.message)
-  
+
     if (error.name === 'CastError') {
-      return response.status(400).send({ error: 'malformatted id' })
+        return response.status(400).send({ error: 'malformatted id' })
     }
     else if (error.name === 'ValidationError') {
         return response.status(400).json({ error: error.message })
     }
-  
+
     next(error)
-  }
-  
+}
+
 app.use(errorHandler)
-  

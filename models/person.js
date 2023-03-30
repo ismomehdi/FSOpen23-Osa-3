@@ -6,16 +6,16 @@ const url = process.env.MONGODB_URI
 
 console.log('connecting to', url)
 mongoose.connect(url)
-  .then(result => {
-    console.log('connected to MongoDB')
-  })
-  .catch((error) => {
-    console.log('error connecting to MongoDB:', error.message)
-  })
+    .then(() => {
+        console.log('connected to MongoDB')
+    })
+    .catch((error) => {
+        console.log('error connecting to MongoDB:', error.message)
+    })
 
 const numberValidator = (number) => {
-  const numberRegex = /^(\d{2,3})-(\d{1,})$/
-  return numberRegex.test(number)
+    const numberRegex = /^(\d{2,3})-(\d{1,})$/
+    return numberRegex.test(number)
 }
 
 const peopleSchema = new mongoose.Schema({
@@ -25,22 +25,22 @@ const peopleSchema = new mongoose.Schema({
         required: true
     },
     number: {
-      type: String,
-      required: true,
-      minlength: 8,
-      validate: {
-        validator: numberValidator,
-        message: props => `${props.value} is not a valid phone number!`
-      },
+        type: String,
+        required: true,
+        minlength: 8,
+        validate: {
+            validator: numberValidator,
+            message: props => `${props.value} is not a valid phone number!`
+        },
     },
-  })
+})
 
 peopleSchema.set('toJSON', {
-  transform: (document, returnedObject) => {
-    returnedObject.id = returnedObject._id.toString()
-    delete returnedObject._id
-    delete returnedObject.__v
-  }
+    transform: (document, returnedObject) => {
+        returnedObject.id = returnedObject._id.toString()
+        delete returnedObject._id
+        delete returnedObject.__v
+    }
 })
 
 module.exports = mongoose.model('Person', peopleSchema)
